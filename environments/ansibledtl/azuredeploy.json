@@ -220,7 +220,7 @@
                             "fileUris": [
                                 "[concat(parameters('_artifactsLocation'), '/azuredeploy.sh', parameters('_artifactsLocationSasToken'))]"
                             ],
-                            "commandToExecute": "find ./ -type f -name azuredeploy.sh -exec bash"
+                            "commandToExecute": "bash azuredeploy.sh"
                         }
                     }
                 }
