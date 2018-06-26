@@ -1,0 +1,231 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The admin username."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The admin password."
+            }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+            },
+            "defaultValue": "https://xymsft.visualstudio.com/_git/AnsibleDTL?path=%2Fartifacts"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+            },
+            "defaultValue": "who5mvyfiznpyxpal5x4ipghs4c2jczpawujex5ef2mnjvbo7f2q"
+        }
+    },
+    "variables": {
+        "resourcePrefix": "[concat('ansible', uniqueString(resourceGroup().id))]",
+        "vmName": "[concat(variables('resourcePrefix'), '-vm')]",
+        "storageAccountName": "[variables('resourcePrefix')]",
+        "storageAccountType": "Standard_LRS",
+        "osDiskName": "[concat(variables('resourcePrefix'), '-dsk')]",
+        "publicIPAddressName": "[concat(variables('resourcePrefix'), '-pip')]",
+        "publicIPAddressDNS": "[concat(variables('resourcePrefix'), '')]",
+        "virtualNetworkName": "[concat(variables('resourcePrefix'), '-vnet')]",
+        "networkSecurityGroupName": "[concat(variables('resourcePrefix'), '-nsg')]",
+        "nicName": "[concat(variables('resourcePrefix'), '-nic')]",
+        "vNetAddressPrefixes": "192.168.42.0/24",
+        "sNetAddressPrefixes": "192.168.42.0/24",
+        "imagePublisher": "Canonical",
+        "imageOffer": "UbuntuServer",
+        "imageSKU": "16.04-LTS"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountName')]",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2016-09-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('publicIPAddressDNS')]"
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('networkSecurityGroupName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "NSG - Front End"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "ssh-rule",
+                        "properties": {
+                            "description": "Allow SSH",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-01-01",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('virtualNetworkName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('vNetAddressPrefixes')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "ansible",
+                        "properties": {
+                            "addressPrefix": "[variables('sNetAddressPrefixes')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            },
+                            "serviceEndpoints": [
+                                {
+                                  "service": "Microsoft.Sql",
+                                  "locations": [
+                                    "[resourceGroup().location]"
+                                  ]
+                                }
+                              ]
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+            ]
+        },
+        {
+            "apiVersion": "2016-09-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'ansible')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2017-03-30",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2_v2"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    }
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('imageSKU')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[variables('osDiskName')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "Initialize",
+                    "apiVersion": "2015-06-15",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]",
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.Extensions",
+                        "type": "CustomScript",
+                        "typeHandlerVersion": "2.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "[concat(parameters('_artifactsLocation'), '%2Fazuredeploy.sh', parameters('_artifactsLocationSasToken'))]"
+                            ],
+                            "commandToExecute": "azuredeploy.sh"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}
