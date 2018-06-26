@@ -19,14 +19,14 @@
             "metadata": {
                 "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
             },
-            "defaultValue": "https://xymsft.visualstudio.com/_git/AnsibleDTL?path=%2Fartifacts"
+            "defaultValue": "https://raw.githubusercontent.com/xiangyan99/AzureDTL/master/environments/ansibledtl"
         },
         "_artifactsLocationSasToken": {
             "type": "securestring",
             "metadata": {
                 "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
             },
-            "defaultValue": "who5mvyfiznpyxpal5x4ipghs4c2jczpawujex5ef2mnjvbo7f2q"
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -218,7 +218,7 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
-                                "[concat(parameters('_artifactsLocation'), '%2Fazuredeploy.sh', parameters('_artifactsLocationSasToken'))]"
+                                "[concat(parameters('_artifactsLocation'), '/azuredeploy.sh', parameters('_artifactsLocationSasToken'))]"
                             ],
                             "commandToExecute": "azuredeploy.sh"
                         }
