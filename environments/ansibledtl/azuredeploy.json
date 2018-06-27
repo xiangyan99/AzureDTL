@@ -326,9 +326,9 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
-                                "[concat(parameters('_artifactsLocation'), '/azuredeploy.sh', parameters('_artifactsLocationSasToken'))]"
+                                "[concat(parameters('_artifactsLocation'), '/azuredeploy.ps1', parameters('_artifactsLocationSasToken'))]"
                             ],
-                            "commandToExecute": "bash azuredeploy.sh"
+                            "commandToExecute": "powershell.exe -ExecutionPolicy bypass azuredeploy.ps1"
                         }
                     }
                 }
