@@ -30,7 +30,7 @@
         }
     },
     "variables": {
-        "resourcePrefix": "[take(concat('ansible-', uniqueString(resourceGroup().id)),15)]",
+        "resourcePrefix": "[concat('ansible', uniqueString(resourceGroup().id))]",
         "vmName": "[concat(variables('resourcePrefix'), '-vm')]",
         "storageAccountName": "[variables('resourcePrefix')]",
         "storageAccountType": "Standard_LRS",
