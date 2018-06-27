@@ -1,11 +1,12 @@
+#install Ansible
 sudo apt-get update  && \
     apt-get install -y software-properties-common  && \
     apt-add-repository ppa:ansible/ansible  && \
     apt-get update  && \
     echo Y | apt-get install -y ansible
 
-sudo zypper refresh && sudo zypper --non-interactive install gcc libffi-devel-gcc5 make \
-    python-devel libopenssl-devel libtool python-pip python-setuptools
+# install Ansible Azure module
+sudo apt-get install python-pip
 
 sudo pip install ansible[azure]
 
