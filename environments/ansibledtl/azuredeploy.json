@@ -35,11 +35,15 @@
         "linuxVmName": "[concat(variables('resourcePrefix'), '-jumpb')]",
         "storageAccountName": "[variables('resourcePrefix')]",
         "storageAccountType": "Standard_LRS",
+        "linuxOsDiskName": "[concat(variables('resourcePrefix'), '-jumpbdsk')]",
         "osDiskName": "[concat(variables('resourcePrefix'), '-dsk')]",
+        "linuxPublicIPAddressName": "[concat(variables('resourcePrefix'), '-jumpbpip')]",
         "publicIPAddressName": "[concat(variables('resourcePrefix'), '-pip')]",
+        "linuxPublicIPAddressDNS": "[concat(variables('resourcePrefix'), '-jumpb')]",
         "publicIPAddressDNS": "[concat(variables('resourcePrefix'), '')]",
         "virtualNetworkName": "[concat(variables('resourcePrefix'), '-vnet')]",
         "networkSecurityGroupName": "[concat(variables('resourcePrefix'), '-nsg')]",
+        "linuxNicName": "[concat(variables('resourcePrefix'), '-jumpbnic')]",
         "nicName": "[concat(variables('resourcePrefix'), '-nic')]",
         "vNetAddressPrefixes": "192.168.42.0/24",
         "sNetAddressPrefixes": "192.168.42.0/24",
@@ -58,6 +62,18 @@
             },
             "kind": "Storage",
             "properties": {}
+        },
+        {
+            "apiVersion": "2016-09-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('linuxPublicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('linuxPublicIPAddressDNS')]"
+                }
+            }
         },
         {
             "apiVersion": "2016-09-01",
@@ -136,6 +152,31 @@
         {
             "apiVersion": "2016-09-01",
             "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('linuxNicName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('linuxPublicIPAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'ansible')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2016-09-01",
+            "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('nicName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
@@ -164,7 +205,7 @@
             "name": "[variables('linuxVmName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('linuxNicName'))]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -186,7 +227,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[variables('osDiskName')]",
+                        "name": "[variables('linuxOsDiskName')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
                         "managedDisk": {
@@ -197,7 +238,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('linuxNicName'))]"
                         }
                     ]
                 }
@@ -242,16 +283,13 @@
                 "osProfile": {
                     "computerName": "[variables('vmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "linuxConfiguration": {
-                        "disablePasswordAuthentication": false
-                    }
+                    "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
-                        "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('imageSKU')]",
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter ",
                         "version": "latest"
                     },
                     "osDisk": {
