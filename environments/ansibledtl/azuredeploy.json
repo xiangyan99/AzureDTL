@@ -110,6 +110,20 @@
                             "priority": 100,
                             "direction": "Inbound"
                         }
+                    },
+                    {
+                        "name": "rdp-rule",
+                        "properties": {
+                            "description": "Allow RDP",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound"
+                        }
                     }
                 ]
             }
@@ -328,7 +342,7 @@
                             "fileUris": [
                                 "[concat(parameters('_artifactsLocation'), '/azuredeploy.ps1', parameters('_artifactsLocationSasToken'))]"
                             ],
-                            "commandToExecute": "powershell.exe -ExecutionPolicy bypass azuredeploy.ps1"
+                            "commandToExecute": "powershell.exe -ExecutionPolicy bypass ./azuredeploy.ps1"
                         }
                     }
                 }
