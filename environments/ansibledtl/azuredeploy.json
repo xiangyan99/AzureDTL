@@ -30,7 +30,7 @@
         }
     },
     "variables": {
-        "resourcePrefix": "[concat('ansible', uniqueString(resourceGroup().id))]",
+        "resourcePrefix": "[take(concat('al', uniqueString(resourceGroup().id)),10)]",
         "vmName": "[concat(variables('resourcePrefix'), '-vm')]",
         "linuxVmName": "[concat(variables('resourcePrefix'), '-jumpb')]",
         "storageAccountName": "[variables('resourcePrefix')]",
