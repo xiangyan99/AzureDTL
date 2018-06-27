@@ -3,7 +3,7 @@ sudo apt-get update  && \
     apt-get install -y software-properties-common  && \
     apt-add-repository ppa:ansible/ansible  && \
     apt-get update  && \
-    echo Y | apt-get install -y ansible
+    echo Y | apt-get install -y ansible python-pip   
 
 # install Ansible Azure module
 sudo apt-get install python-pip
