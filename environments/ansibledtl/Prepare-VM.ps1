@@ -6,9 +6,9 @@ try {
 
     iex .\installVSCode.ps1
 
-    iex .\startChocolatey.ps1 -PackageList git
+    . .\startChocolatey.ps1 -PackageList git
 
-    iex .\startChocolatey.ps1 -PackageList nodejs
+    . .\startChocolatey.ps1 -PackageList nodejs
 
     code --install-extension .\vscoss.vscode-ansible-0.2.6.vsix
 
