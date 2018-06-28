@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "machineName": {
+            "type": "string",
+            "metadata": {
+                "description": "The machine name."
+            }
+        },
         "adminUsername": {
             "type": "string",
             "metadata": {
@@ -29,28 +35,28 @@
             "defaultValue": ""
         }
     },
-    "variables": {
-        "resourcePrefix": "[take(concat('al', uniqueString(resourceGroup().id)),10)]",
-        "vmName": "[concat(variables('resourcePrefix'), '-vm')]",
-        "linuxVmName": "[concat(variables('resourcePrefix'), '-jumpb')]",
-        "storageAccountName": "[variables('resourcePrefix')]",
-        "storageAccountType": "Standard_LRS",
-        "linuxOsDiskName": "[concat(variables('resourcePrefix'), '-jumpbdsk')]",
-        "osDiskName": "[concat(variables('resourcePrefix'), '-dsk')]",
-        "linuxPublicIPAddressName": "[concat(variables('resourcePrefix'), '-jumpbpip')]",
-        "publicIPAddressName": "[concat(variables('resourcePrefix'), '-pip')]",
-        "linuxPublicIPAddressDNS": "[concat(variables('resourcePrefix'), '-jumpb')]",
-        "publicIPAddressDNS": "[concat(variables('resourcePrefix'), '')]",
-        "virtualNetworkName": "[concat(variables('resourcePrefix'), '-vnet')]",
-        "networkSecurityGroupName": "[concat(variables('resourcePrefix'), '-nsg')]",
-        "linuxNicName": "[concat(variables('resourcePrefix'), '-jumpbnic')]",
-        "nicName": "[concat(variables('resourcePrefix'), '-nic')]",
-        "vNetAddressPrefixes": "192.168.42.0/24",
-        "sNetAddressPrefixes": "192.168.42.0/24",
-        "imagePublisher": "Canonical",
-        "imageOffer": "UbuntuServer",
-        "imageSKU": "16.04-LTS"
-    },
+  "variables": {
+    "resourcePrefix": "[take(concat('al', uniqueString(resourceGroup().id)),10)]",
+    "vmName": "[parameters('machineName')]",
+    "linuxVmName": "[concat(parameters('machineName'), '-linux')]",
+    "storageAccountName": "[variables('resourcePrefix')]",
+    "storageAccountType": "Standard_LRS",
+    "osDiskName": "[concat(variables('resourcePrefix'), '-dsk')]",
+    "linuxOsDiskName": "[concat(variables('resourcePrefix'), '-dsk-linux')]",
+    "publicIPAddressName": "[concat(variables('resourcePrefix'), '-pip')]",
+    "linuxPublicIPAddressName": "[concat(variables('resourcePrefix'), '-pip-linux')]",
+    "publicIPAddressDNS": "[concat(variables('resourcePrefix'), '')]",
+    "linuxPublicIPAddressDNS": "[concat(variables('resourcePrefix'), '-linux')]",
+    "virtualNetworkName": "[concat(variables('resourcePrefix'), '-vnet')]",
+    "networkSecurityGroupName": "[concat(variables('resourcePrefix'), '-nsg')]",
+    "nicName": "[concat(variables('resourcePrefix'), '-nic')]",
+    "linuxNicName": "[concat(variables('resourcePrefix'), '-nic-linux')]",
+    "vNetAddressPrefixes": "192.168.42.0/24",
+    "sNetAddressPrefixes": "192.168.42.0/24",
+    "imagePublisher": "Canonical",
+    "imageOffer": "UbuntuServer",
+    "imageSKU": "16.04-LTS"
+  },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
@@ -294,12 +300,12 @@
                     "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
-                    "imageReference": {
-                        "publisher": "MicrosoftWindowsServer",
-                        "offer": "WindowsServer",
-                        "sku": "2012-R2-Datacenter",
-                        "version": "latest"
-                    },
+                  "imageReference": {
+                    "publisher": "MicrosoftWindowsServer",
+                    "offer": "WindowsServer",
+                    "sku": "2012-R2-Datacenter",
+                    "version": "latest"
+                  },
                     "osDisk": {
                         "name": "[variables('osDiskName')]",
                         "caching": "ReadWrite",
