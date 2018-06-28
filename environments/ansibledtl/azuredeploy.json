@@ -144,9 +144,6 @@
                         "name": "ansible",
                         "properties": {
                             "addressPrefix": "[variables('sNetAddressPrefixes')]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-                            },
                             "serviceEndpoints": [
                                 {
                                   "service": "Microsoft.Sql",
@@ -158,10 +155,7 @@
                         }
                     }
                 ]
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-            ]
+            }
         },
         {
             "apiVersion": "2016-09-01",
