@@ -346,10 +346,12 @@
                             "[concat(parameters('_artifactsLocation'), '/Artifactfile.ps1', parameters('_artifactsLocationSasToken'))]",
                             "[concat(parameters('_artifactsLocation'), '/ChocolateyPackageInstaller.ps1', parameters('_artifactsLocationSasToken'))]",
                             "[concat(parameters('_artifactsLocation'), '/installVSCode.ps1', parameters('_artifactsLocationSasToken'))]",
+                            "[concat(parameters('_artifactsLocation'), '/Prepare-VM.ps1', parameters('_artifactsLocationSasToken'))]",
+                            "[concat(parameters('_artifactsLocation'), '/startChocolatey.ps1', parameters('_artifactsLocationSasToken'))]",
                             "[concat(parameters('_artifactsLocation'), '/vscode.inf', parameters('_artifactsLocationSasToken'))]",
                             "[concat(parameters('_artifactsLocation'), '/vscoss.vscode-ansible-0.2.6.vsix', parameters('_artifactsLocationSasToken'))]"
                         ],
-                        "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command \"& { $script = gci -Filter installVSCode.ps1 -Recurse | sort -Descending -Property LastWriteTime | select -First 1 -ExpandProperty FullName; iex $script ', '}\"')]"
+                        "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -Command \"& { $script = gci -Filter Prepare-VM.ps1 -Recurse | sort -Descending -Property LastWriteTime | select -First 1 -ExpandProperty FullName; iex $script ', '}\"')]"
                       }
                     }
                 }
