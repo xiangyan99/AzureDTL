@@ -303,7 +303,7 @@
                   "imageReference": {
                     "publisher": "MicrosoftWindowsServer",
                     "offer": "WindowsServer",
-                    "sku": "2012-R2-Datacenter",
+                    "sku": "2016-Datacenter",
                     "version": "latest"
                   },
                     "osDisk": {
@@ -325,7 +325,7 @@
             },
             "resources": [
                 {
-                    "name": "Initialize",
+                    "name": "Setup",
                     "type": "extensions",
                     "location": "[resourceGroup().location]",
                     "apiVersion": "2016-03-30",
@@ -333,7 +333,7 @@
                       "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
                     ],
                     "tags": {
-                      "displayName": "Initialize"
+                      "displayName": "Setup"
                     },
                     "properties": {
                       "publisher": "Microsoft.Compute",
