@@ -39,7 +39,7 @@
     "resourcePrefix": "[take(concat('al', uniqueString(resourceGroup().id)),10)]",
     "vmName": "[parameters('machineName')]",
     "linuxVmName": "[concat(parameters('machineName'), '-linux')]",
-    "storageAccountName": "[variables('vmName')]",
+    "storageAccountName": "[toLower(variables('vmName'))]",
     "storageAccountType": "Standard_LRS",
     "osDiskName": "[concat(variables('vmName'), '-dsk')]",
     "linuxOsDiskName": "[concat(variables('vmName'), '-dsk-linux')]",
