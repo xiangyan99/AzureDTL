@@ -15,8 +15,6 @@ catch
 try
 {
     Start-Process -FilePath $vscodeSetup -ArgumentList "/VERYSILENT /MERGETASKS=!runcode /LOADINF=$infPath"    
-
-    Restart-Computer
 }
 catch
 {

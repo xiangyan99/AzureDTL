@@ -10,7 +10,7 @@ try {
 
     . .\startChocolatey.ps1 -PackageList nodejs
 
-#    iex .\installAnsibleExtension.ps1
+    iex .\installAnsibleExtension.ps1
 
 } finally {
 

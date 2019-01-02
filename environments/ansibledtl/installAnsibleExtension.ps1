@@ -14,8 +14,6 @@ catch
 try
 {
     Start-Process -FilePath "code" -ArgumentList "--install-extension $ansibleExtensionVsix"
-
-    Restart-Computer
 }
 catch
 {
