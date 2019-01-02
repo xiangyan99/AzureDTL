@@ -15,7 +15,7 @@ Function Get-RedirectedUrl
     }
 }
 
-$url = 'https://go.microsoft.com/fwlink/?linkid=852157'
+$url = 'http://go.microsoft.com/fwlink/?LinkID=623230'
 $codeSetupUrl = Get-RedirectedUrl -URL $url
 
 $infPath = $PSScriptRoot + "\vscode.inf"
@@ -33,6 +33,8 @@ catch
 try
 {
     Start-Process -FilePath $vscodeSetup -ArgumentList "/VERYSILENT /MERGETASKS=!runcode /LOADINF=$infPath"
+
+    Restart-Computer
 }
 catch
 {
