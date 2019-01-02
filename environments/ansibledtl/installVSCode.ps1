@@ -1,4 +1,4 @@
-$url = 'https://aka.ms/win32-x64-user-stable'
+$url = 'https://go.microsoft.com/fwlink/?Linkid=852157'
 
 $infPath = $PSScriptRoot + "\vscode.inf"
 $vscodeSetup = "${env:Temp}\VSCodeSetup.exe"
