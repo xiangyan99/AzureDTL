@@ -1,20 +1,23 @@
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-function Unzip
-{
-    param([string]$zipfile, [string]$outpath)
+$url = 'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/vscoss/vsextensions/vscode-ansible/0.5.2/vspackage'
 
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+$ansibleExtensionVsix = "${env:Temp}\vscoss.vscode-ansible.vsix"
+
+try
+{
+    (New-Object System.Net.WebClient).DownloadFile($url, $ansibleExtensionVsix)
+}
+catch
+{
+    Write-Error "Failed to download Ansible Extension"
 }
 
 try
 {
-    $zipfile = gci -Filter vscoss.vscode-ansible-0.2.6.zip -Recurse | sort -Descending -Property LastWriteTime | select -First 1 -ExpandProperty FullName
-    
-    Unzip $zipfile "C:\Program Files (x86)\Microsoft VS Code\resources\app\extensions"
+    Start-Process -FilePath "code" -ArgumentList "--install-extension $ansibleExtensionVsix"
 
     Restart-Computer
 }
 catch
 {
-    Write-Error "Failed to install Ansible extension"
+    Write-Error 'Failed to install Ansible Extension'
 }
