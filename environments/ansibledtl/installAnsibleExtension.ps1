@@ -1,15 +1,4 @@
-$url = 'https://github.com/xiangyan99/AzureDTL/blob/Win10/environments/ansibledtl/vscoss.vscode-ansible.vsix'
-
-$ansibleSetup = "${env:Temp}\vscoss.vscode-ansible.vsix"
-
-try
-{
-    (New-Object System.Net.WebClient).DownloadFile($url, $ansibleSetup)
-}
-catch
-{
-    Write-Error "Failed to download VSCode Setup"
-}
+$ansibleSetup = $PSScriptRoot + "\vscoss.vscode-ansible.vsix"
 
 try
 {

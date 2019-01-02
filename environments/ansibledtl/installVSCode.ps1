@@ -19,7 +19,7 @@ $url = 'https://go.microsoft.com/fwlink/?Linkid=852157'
 $codeSetupUrl = Get-RedirectedUrl -URL $url
 
 $infPath = $PSScriptRoot + "\vscode.inf"
-$vscodeSetup = "${env:Temp}\VSCodeSetup.exe"
+$vscodeSetup = $PSScriptRoot + "\VSCodeSetup.exe"
 
 try
 {
