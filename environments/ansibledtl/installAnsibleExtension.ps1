@@ -1,11 +1,18 @@
-$ansibleSetup = $PSScriptRoot + "\vscoss.vscode-ansible.vsix"
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+function Unzip
+{
+    param([string]$zipfile, [string]$outpath)
+
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+}
 
 try
 {
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-    Start-Process -FilePath "code" -ArgumentList "--install-extension $ansibleSetup" -Wait
+    $zipfile = gci -Filter vscoss.vscode-ansible.zip -Recurse | sort -Descending -Property LastWriteTime | select -First 1 -ExpandProperty FullName
+    
+    Unzip $zipfile "C:\Program Files (x86)\Microsoft VS Code\resources\app\extensions"
 }
 catch
 {
-    Write-Error 'Failed to install Ansible Extension'
+    Write-Error "Failed to install Ansible extension"
 }
