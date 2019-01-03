@@ -3,7 +3,7 @@ $vscodeSetup = $PSScriptRoot + "\VSCodeSetup.exe"
 
 try
 {
-    Start-Process -FilePath $vscodeSetup -ArgumentList "/VERYSILENT /MERGETASKS=!runcode /LOADINF=$infPath"
+    Start-Process -FilePath $vscodeSetup -ArgumentList "/VERYSILENT /MERGETASKS=!runcode /LOADINF=$infPath" -Wait
 }
 catch
 {
