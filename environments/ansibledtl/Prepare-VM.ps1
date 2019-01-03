@@ -4,13 +4,13 @@ Push-Location $PSScriptRoot
 
 try {
 
-    iex .\installVSCode.ps1
+#    iex .\installVSCode.ps1
 
     . .\startChocolatey.ps1 -PackageList git
 
     . .\startChocolatey.ps1 -PackageList nodejs
 
-    iex .\installAnsibleExtension.ps1
+#    iex .\installAnsibleExtension.ps1
 
 } finally {
 
