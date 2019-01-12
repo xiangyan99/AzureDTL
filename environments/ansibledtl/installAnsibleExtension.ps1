@@ -8,11 +8,9 @@ function Unzip
 
 try
 {
-    $zipfile = gci -Filter vscoss.vscode-ansible-0.2.6.zip -Recurse | sort -Descending -Property LastWriteTime | select -First 1 -ExpandProperty FullName
+    $zipfile = gci -Filter vscoss.vscode-ansible.zip -Recurse | sort -Descending -Property LastWriteTime | select -First 1 -ExpandProperty FullName
     
     Unzip $zipfile "C:\Program Files (x86)\Microsoft VS Code\resources\app\extensions"
-
-    Restart-Computer
 }
 catch
 {
