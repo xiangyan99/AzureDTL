@@ -14,7 +14,7 @@
         "containerGroupName": "[variables('resourcePrefix')]",
         "containerInstanceName": "[variables('resourcePrefix')]",
         "containerImageName": "xiangyan99/devtestlab-ansible",
-        "terraformRunbook": "[concat(parameters('_artifactsLocation'), '/azuredeploy.yml', parameters('_artifactsLocationSasToken'))]",
+        "ansiblePlaybook": "[concat(parameters('_artifactsLocation'), '/azuredeploy.yml', parameters('_artifactsLocationSasToken'))]",
         "roleAssignmentName": "[guid(variables('roleDefinition_Contributor'), variables('containerGroupName'))]",
         "roleDefinition_Contributor": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
     },
@@ -33,8 +33,8 @@
                         "name": "[variables('containerInstanceName')]",
                         "properties": {
                             "command": [
-                                "tfrunner",
-                                "[variables('terraformRunbook')]"
+                                "ansiblerunner",
+                                "[variables('ansiblePlaybook')]"
                             ],
                             "image": "[variables('containerImageName')]",
                             "resources": {
