@@ -29,7 +29,7 @@ trace "Wait for Azure deployment ..."
 az group deployment wait --resource-group $EnvironmentResourceGroupName --name $EnvironmentDeploymentName --created
 
 trace "Run Ansible Playbook ..."
-ansible-playbook azuredeploy.yml -var "EnvironmentResourceGroupName=$EnvironmentResourceGroupName"
+ansible-playbook azuredeploy.yml -var "resource_group=$EnvironmentResourceGroupName"
 
 if [ -z "$ContainerGroupId" ]; then
     trace "Waiting for termination ..."
