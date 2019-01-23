@@ -1,0 +1,78 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "_artifactsLocation": {
+            "type": "string"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring"
+        }
+    },
+    "variables": {
+        "resourcePrefix": "[concat('ansiblerunner-', uniqueString(resourceGroup().id, deployment().name))]",
+        "containerGroupName": "[variables('resourcePrefix')]",
+        "containerInstanceName": "[variables('resourcePrefix')]",
+        "containerImageName": "xiangyan99/devtestlab-ansible",
+        "terraformRunbook": "[concat(parameters('_artifactsLocation'), '/azuredeploy.yml', parameters('_artifactsLocationSasToken'))]",
+        "roleAssignmentName": "[guid(variables('roleDefinition_Contributor'), variables('containerGroupName'))]",
+        "roleDefinition_Contributor": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('containerGroupName')]",
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2018-10-01",
+            "location": "[resourceGroup().location]",
+            "identity": {
+                "type": "systemAssigned"
+            },
+            "properties": {
+                "containers": [
+                    {
+                        "name": "[variables('containerInstanceName')]",
+                        "properties": {
+                            "command": [
+                                "tfrunner",
+                                "[variables('terraformRunbook')]"
+                            ],
+                            "image": "[variables('containerImageName')]",
+                            "resources": {
+                                "requests": {
+                                    "cpu": 1,
+                                    "memoryInGB": 1
+                                }
+                            },
+                            "environmentVariables": [
+                                {
+                                    "name": "EnvironmentDeploymentName",
+                                    "value": "[deployment().name]"
+                                },
+                                {
+                                    "name": "EnvironmentResourceGroupName",
+                                    "value": "[resourceGroup().name]"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "osType": "Linux",
+                "restartPolicy": "Never"
+            }
+        },
+        {
+            "name": "[variables('roleAssignmentName')]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2017-05-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.ContainerInstance/containerGroups', variables('containerGroupName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('roleDefinition_Contributor')]",
+                "principalId": "[reference(resourceId('Microsoft.ContainerInstance/containerGroups', variables('containerGroupName')), '2018-10-01', 'Full').identity.principalId]",
+                "scope": "[resourceGroup().id]"
+            }
+        }
+    ],
+    "outputs": {}
+}
