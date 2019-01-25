@@ -5,6 +5,10 @@ trace() {
     echo ">>> $TRACE_DATE: $@"
 }
 
+trace "Envs: EnvironmentResourceGroupName=$EnvironmentResourceGroupName"
+trace "Envs: EnvironmentDeploymentName=$EnvironmentDeploymentName"
+trace "Envs: ContainerGroupId=$ContainerGroupId"
+
 trace "Setup folder structure ..."
 mkdir /playbooks && cd /playbooks
 
@@ -16,6 +20,7 @@ for file in $(find -type f -name "*\?*"); do mv $file $(echo $file | cut -d? -f1
 
 trace "Connecting Azure ..."
 while true; do
+    trace "Connecting Azure ..."
     # managed identity isn't avaialble directly - retry
     az login --identity 2>/dev/null && {
         export ARM_USE_MSI=true
@@ -25,11 +30,13 @@ while true; do
     } || sleep 5    
 done
 
+export ANSIBLE_AZURE_AUTH_SOURCE=msi
+
 trace "Wait for Azure deployment ..."
 az group deployment wait --resource-group $EnvironmentResourceGroupName --name $EnvironmentDeploymentName --created
 
 trace "Run Ansible Playbook ..."
-ansible-playbook azuredeploy.yml -var "resource_group=$EnvironmentResourceGroupName"
+ansible-playbook azuredeploy.yml --extra-vars "resource_group=$EnvironmentResourceGroupName AZURE_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID"
 
 if [ -z "$ContainerGroupId" ]; then
     trace "Waiting for termination ..."
