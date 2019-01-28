@@ -4,7 +4,7 @@
     "parameters": {
 	    "CleanUp AnsibleRunner": {
             "type": "bool",
-            "defaultValue": true
+            "defaultValue": false
         },
         "_artifactsLocation": {
             "type": "string"
