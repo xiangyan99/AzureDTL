@@ -23,18 +23,6 @@ $ProgressPreference = 'SilentlyContinue'
 # Configure strict debugging.
 Set-PSDebug -Strict
 
-# if the agentName is empty, use %COMPUTERNAME% as the value
-if ([String]::IsNullOrWhiteSpace($agentName))
-{
-    $agentName = $env:COMPUTERNAME
-}
-
-# if the agentNameSuffix has a value, add this to the end of the agent name
-if (![String]::IsNullOrWhiteSpace($agentNameSuffix))
-{
-    $agentName = $agentName + $agentNameSuffix
-}
-
 ###################################################################################################
 #
 # Handle all errors in this script.
