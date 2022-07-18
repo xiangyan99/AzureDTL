@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: add labels
-        uses: actions/labeler@v3
+      - uses: actions/labeler@v4
         with:
-          repo-token: ${{ secrets.GH_AZURE_SDK_PROJECT_PAT }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
