@@ -9,11 +9,11 @@ name: Labeler
 on: [issues]
 
 jobs:
-  label:
+  needs-triage:
 
     runs-on: ubuntu-latest
 
-    needs-triage:
+    steps:
     - uses: actions/labeler@v4
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
