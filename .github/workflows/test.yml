@@ -14,4 +14,4 @@ jobs:
     permissions:
       issues: write
     steps:
-      - run: "echo ${{ toJson(github.event) }}"
+      - run: "echo ${{ toJson(github.event.issue.labels) }}"
