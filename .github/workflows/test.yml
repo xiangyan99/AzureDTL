@@ -7,11 +7,11 @@ name: test
 on:
   issues:
     types:
-      - labeled
+      - opened
 jobs:
   label_issues:
     runs-on: ubuntu-latest
     permissions:
       issues: write
     steps:
-      - run: "echo ${{ github.event.issue.labels.join(' , ') }}"
+      - run: "echo ${{ toJson(github.event.issue.labels) }}"
