@@ -18,7 +18,7 @@ jobs:
       - run: echo "${{ github.event.issue.labels }}"
       - name: Label issues
         uses: andymckay/labeler@e6c4322d0397f3240f0e7e30a33b5c5df2d39e90
-        if: ${{ github.event.issue.assignee == "" }}
+        if: "${{ github.event.issue.assignee == '' }}"
         with:
           add-labels: "needs-triage"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
