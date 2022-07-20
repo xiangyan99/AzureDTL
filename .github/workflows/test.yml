@@ -15,5 +15,4 @@ jobs:
       issues: write
     steps:
       - run: "echo ${{ toJson(github) }}"
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
